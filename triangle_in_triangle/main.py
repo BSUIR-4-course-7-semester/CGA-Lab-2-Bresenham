@@ -1,6 +1,7 @@
 import ctypes
 import sys
 from sdl2 import *
+from sdl2.examples.pixelaccess import BLACK
 
 from bresenham.graphics import draw_line, Point
 
@@ -33,6 +34,28 @@ def draw_recursive_polygon(renderer, points, color, µ, depth):
         draw_polygon(renderer, points, color)
         draw_recursive_polygon(renderer, calc_new_points(points, µ), color, µ, depth - 1)
 
+triangle_points = [
+    SDL_Point(0, 200),
+    SDL_Point(200, 200),
+    SDL_Point(100, 0)
+]
+
+
+def move_left(points):
+    return list(map(lambda point: Point(point.x - 5, point.y), points))
+
+
+def move_right(points):
+    return list(map(lambda point: Point(point.x + 5, point.y), points))
+
+
+def move_down(points):
+    return list(map(lambda point: Point(point.x, point.y + 5), points))
+
+
+def move_up(points):
+    return list(map(lambda point: Point(point.x, point.y - 5), points))
+
 
 def main():
     SDL_Init(SDL_INIT_VIDEO)
@@ -43,11 +66,9 @@ def main():
     window_surface = SDL_GetWindowSurface(window)
     renderer = SDL_CreateRenderer(window, -1, 0)
 
-    draw_recursive_polygon(renderer, [
-        SDL_Point(0, 200),
-        SDL_Point(200, 200),
-        SDL_Point(100, 0),
-    ], SDL_Color(255, 255, 113, 255), 0.05, 50)
+    global triangle_points
+
+    draw_recursive_polygon(renderer, triangle_points, SDL_Color(255, 255, 113, 255), 0.05, 50)
 
     SDL_RenderPresent(renderer)
 
@@ -57,6 +78,21 @@ def main():
         while SDL_PollEvent(ctypes.byref(event)) != 0:
             if event.type == SDL_QUIT:
                 running = False
+                break
+            elif event.type == SDL_KEYDOWN:
+                if event.key.keysym.sym == SDLK_RIGHT:
+                    triangle_points = move_right(triangle_points)
+                if event.key.keysym.sym == SDLK_LEFT:
+                    triangle_points = move_left(triangle_points)
+                if event.key.keysym.sym == SDLK_DOWN:
+                    triangle_points = move_down(triangle_points)
+                if event.key.keysym.sym == SDLK_UP:
+                    triangle_points = move_up(triangle_points)
+
+                SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255)
+                SDL_RenderFillRect(renderer, None)
+                draw_recursive_polygon(renderer, triangle_points, SDL_Color(255, 255, 113, 255), 0.05, 50)
+                SDL_RenderPresent(renderer)
                 break
 
     SDL_DestroyWindow(window)
