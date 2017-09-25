@@ -34,6 +34,13 @@ def draw_recursive_polygon(renderer, points, color, µ, depth):
         draw_polygon(renderer, points, color)
         draw_recursive_polygon(renderer, calc_new_points(points, µ), color, µ, depth - 1)
 
+rect_points = [
+    SDL_Point(100, 0),
+    SDL_Point(200, 0),
+    SDL_Point(200, 100),
+    SDL_Point(100, 100)
+]
+
 triangle_points = [
     SDL_Point(0, 200),
     SDL_Point(200, 200),
@@ -57,6 +64,11 @@ def move_up(points):
     return list(map(lambda point: Point(point.x, point.y - 5), points))
 
 
+def clear(renderer):
+    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255)
+    SDL_RenderFillRect(renderer, None)
+
+
 def main():
     SDL_Init(SDL_INIT_VIDEO)
     window = SDL_CreateWindow(b"Recursive polygon",
@@ -68,7 +80,8 @@ def main():
 
     global triangle_points
 
-    draw_recursive_polygon(renderer, triangle_points, SDL_Color(255, 255, 113, 255), 0.05, 50)
+    draw_recursive_polygon(renderer, triangle_points, SDL_Color(255, 255, 113, 255), 0, 1)
+    draw_recursive_polygon(renderer, rect_points, SDL_Color(255, 255, 113, 255), 0, 1)
 
     SDL_RenderPresent(renderer)
 
@@ -89,9 +102,9 @@ def main():
                 if event.key.keysym.sym == SDLK_UP:
                     triangle_points = move_up(triangle_points)
 
-                SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255)
-                SDL_RenderFillRect(renderer, None)
-                draw_recursive_polygon(renderer, triangle_points, SDL_Color(255, 255, 113, 255), 0.05, 50)
+                clear(renderer)
+                draw_recursive_polygon(renderer, triangle_points, SDL_Color(255, 255, 113, 255), 0, 1)
+                draw_recursive_polygon(renderer, rect_points, SDL_Color(255, 255, 113, 255), 0, 1)
                 SDL_RenderPresent(renderer)
                 break
 

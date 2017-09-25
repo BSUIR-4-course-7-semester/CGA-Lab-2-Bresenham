@@ -32,15 +32,15 @@ def draw_polygon(pixels, points, color, filled=False):
     point_count = len(points)
     for i in range(point_count):
         draw_line(pixels, points[i], points[(i + 1) % point_count], color)
-    if filled:
-        center = Point(
-            round(sum([point.x for point in points]) / len(points)),
-            round(sum([point.y for point in points]) / len(points))
-        )
-        try:
-            fill(pixels, center, color)
-        except Exception as e:
-            pass
+    # if filled:
+    #     center = Point(
+    #         round(sum([point.x for point in points]) / len(points)),
+    #         round(sum([point.y for point in points]) / len(points))
+    #     )
+    #     try:
+    #         fill(pixels, center, color)
+    #     except Exception as e:
+    #         pass
 
 
 def get_pixel(pixels, point):
