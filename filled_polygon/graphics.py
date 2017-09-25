@@ -1,5 +1,6 @@
 import sdl2.ext
 from sdl2 import SDL_Point
+import time
 
 
 class Point(SDL_Point):
@@ -43,11 +44,22 @@ def draw_polygon(pixels, points, color, filled=False):
     #         pass
 
 
+def normalize_point(point):
+    return Point(
+        639 if point.x >= 640 else 0 if point.x < 0 else point.x,
+        479 if point.y >= 480 else 0 if point.y < 0 else point.y,
+    )
+
+
 def get_pixel(pixels, point):
+    point = normalize_point(point)
     return pixels[point.y][point.x]
 
 
 def put_pixel(pixels, point, color):
+    point = normalize_point(point)
+    if point.y >= 480:
+        print()
     pixels[point.y][point.x] = color
 
 

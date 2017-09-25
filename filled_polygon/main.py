@@ -27,10 +27,10 @@ def main():
 
     figures = [
         Figure([
-            Point(100, 0),
-            Point(200, 0),
-            Point(200, 100),
-            Point(100, 100)
+            Point(-50, 50),
+            Point(50, 50),
+            Point(50, -50),
+            Point(-50, -50)
         ], sdl2.ext.Color(255, 116, 113, 255), pixels, z_index=2),
         Figure([
             Point(0, 200),
@@ -43,6 +43,8 @@ def main():
     running = True
     old_x = ctypes.c_int32(0)
     old_y = ctypes.c_int32(0)
+
+    last_rotate_time = 0
 
     while running:
         events = sdl2.ext.get_events()
@@ -71,6 +73,15 @@ def main():
                     old_x = x
                     old_y = y
                     figures[selected_figure_index].move(dx, dy)
+
+            if event.type == sdl2.SDL_MOUSEWHEEL:
+                x = ctypes.c_int32(0)
+                y = ctypes.c_int32(0)
+                SDL_GetMouseState(ctypes.byref(x), ctypes.byref(y))
+                on_figure = None
+                for f in figures:
+                    if f.is_point_inside(Point(x, y)):
+                        f.rotate(event.wheel.y)
 
         clear(window_surface)
 
